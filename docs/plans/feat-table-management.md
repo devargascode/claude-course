@@ -142,18 +142,18 @@ Cada tarea es un único cambio verificable de 5-10 min; el proyecto compila tras
 
 Tests con Vitest (`cd packages/api && npx vitest run`).
 
-1. [ ] **API-1** Modelo `Table` y `normalizeTableStatus()` + errores `InvalidTableStatusError`, `TableNotFoundError`. Test: `table.model.test.ts` (acepta/normaliza, rechaza inválido). Ficheros: `models/table.model.ts`, `errors/DomainErrors.ts`.
-2. [ ] **API-2** Migración `tables` en `database.ts`. Test: `table.repository.test.ts` (la tabla existe, `UNIQUE(restaurant_id, number)` se respeta, `:memory:`). Ficheros: `config/database.ts`, `repositories/table.repository.test.ts`.
-3. [ ] **API-3** `SqliteTableRepository` (`findById`, `findByRestaurantId`, `save`, `delete`) + `MockTableRepository`. Test: `table.repository.test.ts` (round-trip). Ficheros: `repositories/table.repository.ts`, `repositories/mocks/MockTableRepository.ts`.
-4. [ ] **API-4** `TableService.create` con validación (número > 0, capacidad entera > 0, estado por defecto `libre`) y `DuplicatedTableNumberError`, `InvalidTableNumberError`, `InvalidTableCapacityError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, `errors/DomainErrors.ts`.
-5. [ ] **API-5** `TableService.update`, `findById`, `findByRestaurantId` y `delete` (rechaza `ocupada` con `TableOccupiedError`; 404 si no existe). Test: `table.service.test.ts`.
-6. [ ] **API-6** `TableService.updateStatus` (normaliza estado, 404 si no existe). Test: `table.service.test.ts`.
-7. [ ] **API-7** `findAvailable(restaurantId, partySize)`: solo libres con capacidad ≥ N, ordenadas; `InvalidPartySizeError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, repo/mock (`findAvailable`).
-8. [ ] **API-8** `occupy(id)` atómico: método `occupyIfFree` en repositorio (`UPDATE ... WHERE status='libre'`) y `TableNotAvailableError`. Test: servicio con mock + repositorio SQLite (segunda ocupación falla).
-9. [ ] **API-9** `errorHandler`: `TableNotFoundError` → 404, `TableNotAvailableError` → 409. Test: `errorHandler.test.ts` (nuevo, con supertest si está disponible; si no, invocando el handler con `res` simulado).
-10. [ ] **API-10** `TableController` + `table.routes.ts` (CRUD y `PATCH status`, `occupy`, roles según tabla) montado en `app.ts`. Test de integración HTTP: `table.routes.test.ts` (201/200/204, 401 sin token, 403 con rol no permitido).
-11. [ ] **API-11** Ruta pública `available` en `table.public.routes.ts` montada en `app.ts`. Test de integración: `table.public.routes.test.ts` (filtra por capacidad y estado, 400 sin `partySize`).
-12. [ ] **API-12** Seed de mesas (idempotente, `INSERT OR IGNORE`) y actualizar `docs/dominio/modelo-datos.md` y `glosario.md`. Test: ejecutar el seed dos veces no duplica (test sobre `:memory:`); docs sin test.
+1. [x] **API-1** Modelo `Table` y `normalizeTableStatus()` + errores `InvalidTableStatusError`, `TableNotFoundError`. Test: `table.model.test.ts` (acepta/normaliza, rechaza inválido). Ficheros: `models/table.model.ts`, `errors/DomainErrors.ts`.
+2. [x] **API-2** Migración `tables` en `database.ts`. Test: `table.repository.test.ts` (la tabla existe, `UNIQUE(restaurant_id, number)` se respeta, `:memory:`). Ficheros: `config/database.ts`, `repositories/table.repository.test.ts`.
+3. [x] **API-3** `SqliteTableRepository` (`findById`, `findByRestaurantId`, `save`, `delete`) + `MockTableRepository`. Test: `table.repository.test.ts` (round-trip). Ficheros: `repositories/table.repository.ts`, `repositories/mocks/MockTableRepository.ts`.
+4. [x] **API-4** `TableService.create` con validación (número > 0, capacidad entera > 0, estado por defecto `libre`) y `DuplicatedTableNumberError`, `InvalidTableNumberError`, `InvalidTableCapacityError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, `errors/DomainErrors.ts`.
+5. [x] **API-5** `TableService.update`, `findById`, `findByRestaurantId` y `delete` (rechaza `ocupada` con `TableOccupiedError`; 404 si no existe). Test: `table.service.test.ts`.
+6. [x] **API-6** `TableService.updateStatus` (normaliza estado, 404 si no existe). Test: `table.service.test.ts`.
+7. [x] **API-7** `findAvailable(restaurantId, partySize)`: solo libres con capacidad ≥ N, ordenadas; `InvalidPartySizeError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, repo/mock (`findAvailable`).
+8. [x] **API-8** `occupy(id)` atómico: método `occupyIfFree` en repositorio (`UPDATE ... WHERE status='libre'`) y `TableNotAvailableError`. Test: servicio con mock + repositorio SQLite (segunda ocupación falla).
+9. [x] **API-9** `errorHandler`: `TableNotFoundError` → 404, `TableNotAvailableError` → 409. Test: `errorHandler.test.ts` (nuevo, con supertest si está disponible; si no, invocando el handler con `res` simulado).
+10. [x] **API-10** `TableController` + `table.routes.ts` (CRUD y `PATCH status`, `occupy`, roles según tabla) montado en `app.ts`. Test de integración HTTP: `table.routes.test.ts` (201/200/204, 401 sin token, 403 con rol no permitido).
+11. [x] **API-11** Ruta pública `available` en `table.public.routes.ts` montada en `app.ts`. Test de integración: `table.public.routes.test.ts` (filtra por capacidad y estado, 400 sin `partySize`).
+12. [x] **API-12** Seed de mesas (idempotente, `INSERT OR IGNORE`) y actualizar `docs/dominio/modelo-datos.md` y `glosario.md`. Test: ejecutar el seed dos veces no duplica (test sobre `:memory:`); docs sin test.
 
 ### 6.2 Admin (`packages/web-admin`)
 
