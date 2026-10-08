@@ -143,7 +143,7 @@ Cada tarea es un único cambio verificable de 5-10 min; el proyecto compila tras
 Tests con Vitest (`cd packages/api && npx vitest run`).
 
 1. [x] **API-1** Modelo `Table` y `normalizeTableStatus()` + errores `InvalidTableStatusError`, `TableNotFoundError`. Test: `table.model.test.ts` (acepta/normaliza, rechaza inválido). Ficheros: `models/table.model.ts`, `errors/DomainErrors.ts`.
-2. [ ] **API-2** Migración `tables` en `database.ts`. Test: `table.repository.test.ts` (la tabla existe, `UNIQUE(restaurant_id, number)` se respeta, `:memory:`). Ficheros: `config/database.ts`, `repositories/table.repository.test.ts`.
+2. [x] **API-2** Migración `tables` en `database.ts`. Test: `table.repository.test.ts` (la tabla existe, `UNIQUE(restaurant_id, number)` se respeta, `:memory:`). Ficheros: `config/database.ts`, `repositories/table.repository.test.ts`.
 3. [ ] **API-3** `SqliteTableRepository` (`findById`, `findByRestaurantId`, `save`, `delete`) + `MockTableRepository`. Test: `table.repository.test.ts` (round-trip). Ficheros: `repositories/table.repository.ts`, `repositories/mocks/MockTableRepository.ts`.
 4. [ ] **API-4** `TableService.create` con validación (número > 0, capacidad entera > 0, estado por defecto `libre`) y `DuplicatedTableNumberError`, `InvalidTableNumberError`, `InvalidTableCapacityError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, `errors/DomainErrors.ts`.
 5. [ ] **API-5** `TableService.update`, `findById`, `findByRestaurantId` y `delete` (rechaza `ocupada` con `TableOccupiedError`; 404 si no existe). Test: `table.service.test.ts`.
