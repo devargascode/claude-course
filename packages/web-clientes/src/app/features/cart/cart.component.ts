@@ -207,9 +207,9 @@ export class CartComponent {
       notes: item.notes || null
     }))
 
-    this.orderService.createOrder(restaurantId, items).subscribe({
+    this.orderService.createOrder(restaurantId, this.cartStore.tableId(), items).subscribe({
       next: (order) => {
-        this.cartStore.clear()
+        this.cartStore.clearItems()
         this.router.navigate(['/orders', order.id])
       },
       error: (err) => {
