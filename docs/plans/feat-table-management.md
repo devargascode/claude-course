@@ -171,7 +171,7 @@ Verificación: specs de store con `ng test` (la tarea ADM-1 comprueba que el run
 2. [x] **EMP-2** `TableStore` (carga, `updateStatus` optimista con rollback en error, polling 30 s con `startPolling/stopPolling`, igual que `OrderStore`). Test: spec con temporizadores simulados. Fichero: `store/table.store.ts`.
 3. [x] **EMP-3** Selector derivado en el store: pedidos activos agrupados por `tableId` para mesas `ocupada` (combina `OrderStore.orders` y `TableStore.tables`). Test: spec del selector (mesa ocupada sin pedidos, con pedidos, pedidos de mesa libre se ignoran).
 4. [x] **EMP-4** Página `mesas` con tarjetas por mesa: número, capacidad, estado y selector para cambiarlo. Test: spec del componente (cambiar estado llama al store). Ficheros: `pages/mesas/mesas.component.{ts,html,css}`.
-5. [ ] **EMP-5** En las mesas ocupadas, mostrar los pedidos con el estado de cada ítem (badge `badge-<estado>` ya existente). Test: spec del componente (renderiza ítems y estados).
+5. [x] **EMP-5** En las mesas ocupadas, mostrar los pedidos con el estado de cada ítem (badge `badge-<estado>` ya existente). Test: spec del componente (renderiza ítems y estados).
 6. [ ] **EMP-6** Ruta `mesas` y enlace "Mesas" en el shell. Test: spec de rutas + `ng build`.
 
 ### 6.4 Clientes (`packages/web-clientes`)
