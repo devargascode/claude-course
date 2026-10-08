@@ -159,7 +159,7 @@ Tests con Vitest (`cd packages/api && npx vitest run`).
 
 Verificación: specs de store con `ng test` (la tarea ADM-1 comprueba que el runner funciona) y `ng build`.
 
-1. [ ] **ADM-1** Modelos `Table`, `CreateTableDto`, `UpdateTableDto` y `TableService` (CRUD HTTP). Test: spec del servicio con `HttpTestingController` (URLs y métodos). Ficheros: `features/tables/models/table.model.ts`, `services/table.service.ts`.
+1. [x] **ADM-1** Modelos `Table`, `CreateTableDto`, `UpdateTableDto` y `TableService` (CRUD HTTP). Test: spec del servicio con `HttpTestingController` (URLs y métodos). Ficheros: `features/tables/models/table.model.ts`, `services/table.service.ts`.
 2. [ ] **ADM-2** `TableStore` (`loadByRestaurant`, `create`, `update`, `delete`, `loading`, `error`). Test: spec del store con servicio simulado. Fichero: `features/tables/store/table.store.ts`.
 3. [ ] **ADM-3** Página `table-list` (tabla con número, descripción, capacidad, badge de estado, editar/borrar con confirmación). Test: spec del componente (renderiza filas y estado vacío). Ficheros: `pages/table-list/`.
 4. [ ] **ADM-4** Página `table-form` (alta/edición con validación de número y capacidad; muestra el error de la API, p. ej. número duplicado). Test: spec (formulario inválido no envía; envía DTO válido). Ficheros: `pages/table-form/`.
