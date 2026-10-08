@@ -1,7 +1,8 @@
 import { Component, inject, signal } from '@angular/core'
-import { ActivatedRoute, RouterLink } from '@angular/router'
+import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { Table } from '../../core/models/table.model'
 import { TableService } from '../../core/services/table.service'
+import { CartStore } from '../../core/store/cart.store'
 
 @Component({
   selector: 'app-table-select',
@@ -52,16 +53,37 @@ import { TableService } from '../../core/services/table.service'
         } @else {
           <div class="tables-grid">
             @for (table of tables(); track table.id) {
-              <div class="table-card card">
+              <button
+                type="button"
+                class="table-card card"
+                [class.selected]="selectedTableId() === table.id"
+                (click)="selectTable(table.id)"
+              >
                 <h3>Mesa {{ table.number }}</h3>
                 @if (table.description) {
                   <p class="table-description">{{ table.description }}</p>
                 }
                 <p class="table-capacity">Capacidad: {{ table.capacity }} personas</p>
-              </div>
+              </button>
             }
           </div>
+          <div class="actions">
+            <button
+              class="btn btn-primary"
+              [disabled]="!selectedTableId() || occupying()"
+              (click)="continue()"
+            >
+              @if (occupying()) {
+                Reservando mesa...
+              } @else {
+                Continuar
+              }
+            </button>
+          </div>
         }
+      }
+      @if (notice()) {
+        <div class="alert-error notice">{{ notice() }}</div>
       }
     </div>
   `,
@@ -98,6 +120,22 @@ import { TableService } from '../../core/services/table.service'
         grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 16px;
       }
+      .table-card {
+        text-align: left;
+        cursor: pointer;
+        border: 2px solid transparent;
+      }
+      .table-card.selected {
+        border-color: var(--green-light);
+      }
+      .actions {
+        margin-top: 24px;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .notice {
+        margin-top: 16px;
+      }
       .table-card h3 {
         font-size: 16px;
         font-weight: 600;
@@ -113,7 +151,9 @@ import { TableService } from '../../core/services/table.service'
 })
 export class TableSelectComponent {
   private readonly route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
   private readonly tableService = inject(TableService)
+  private readonly cartStore = inject(CartStore)
 
   readonly partySize = signal<number | null>(null)
   readonly tables = signal<Table[]>([])
@@ -121,6 +161,9 @@ export class TableSelectComponent {
   readonly error = signal<string | null>(null)
   readonly searched = signal(false)
   readonly searchedPartySize = signal<number | null>(null)
+  readonly selectedTableId = signal<string | null>(null)
+  readonly occupying = signal(false)
+  readonly notice = signal<string | null>(null)
 
   private get restaurantId(): string {
     return this.route.snapshot.paramMap.get('id')!
@@ -147,6 +190,8 @@ export class TableSelectComponent {
 
     this.loading.set(true)
     this.error.set(null)
+    this.notice.set(null)
+    this.selectedTableId.set(null)
     this.tableService.getAvailable(this.restaurantId, size).subscribe({
       next: (tables) => {
         this.tables.set(tables)
@@ -157,6 +202,33 @@ export class TableSelectComponent {
       error: () => {
         this.error.set('Error al cargar las mesas')
         this.loading.set(false)
+      }
+    })
+  }
+  selectTable(tableId: string): void {
+    this.selectedTableId.set(tableId)
+  }
+
+  continue(): void {
+    const tableId = this.selectedTableId()
+    if (!tableId || this.occupying()) return
+
+    this.occupying.set(true)
+    this.notice.set(null)
+    this.tableService.occupy(this.restaurantId, tableId).subscribe({
+      next: (table) => {
+        this.cartStore.setTable(table.restaurantId, table.id)
+        this.occupying.set(false)
+        this.router.navigate(['/restaurants', this.restaurantId, 'menu'])
+      },
+      error: (err) => {
+        this.occupying.set(false)
+        if (err?.status === 409) {
+          this.search()
+          this.notice.set('La mesa ya no está disponible')
+        } else {
+          this.notice.set('Error al ocupar la mesa. Inténtalo de nuevo.')
+        }
       }
     })
   }
