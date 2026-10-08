@@ -85,6 +85,10 @@ export class CartStore {
     this._tableId.set(tableId)
   }
 
+  clearItems(): void {
+    this._items.set([])
+  }
+
   clear(): void {
     this._items.set([])
     this._restaurantId.set(null)
