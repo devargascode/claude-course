@@ -82,6 +82,17 @@ export class TableController {
         }
     }
 
+    getAvailable = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const raw = req.query.partySize
+            const partySize = typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : NaN
+            const tables = await this.tableService.findAvailable(req.params.restaurantId as string, partySize)
+            res.status(200).json(tables.map(t => this.toJSON(t)))
+        } catch (error) {
+            next(error)
+        }
+    }
+
     private toJSON(table: Table) {
         return {
             id: table.id,
