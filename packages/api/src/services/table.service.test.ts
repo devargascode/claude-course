@@ -6,6 +6,7 @@ import {
     InvalidTableNumberError,
     InvalidTableCapacityError,
     InvalidTableStatusError,
+    InvalidPartySizeError,
     TableNotFoundError,
     TableOccupiedError
 } from '@errors/DomainErrors.js'
@@ -139,6 +140,36 @@ describe('TableService', () => {
 
         it('should throw TableNotFoundError when the table does not exist', async () => {
             await expect(service.updateStatus('missing', 'libre')).rejects.toThrow(TableNotFoundError)
+        })
+    })
+
+    describe('findAvailable', () => {
+        it('should return only free tables with enough capacity, ordered by capacity then number', async () => {
+            await service.create({ number: 1, capacity: 6, restaurantId: 'r1' })
+            await service.create({ number: 2, capacity: 4, restaurantId: 'r1' })
+            await service.create({ number: 3, capacity: 4, restaurantId: 'r1' })
+            await service.create({ number: 4, capacity: 2, restaurantId: 'r1' })
+            await service.create({ number: 5, capacity: 8, restaurantId: 'r1', status: 'ocupada' })
+            await service.create({ number: 6, capacity: 8, restaurantId: 'r1', status: 'reservada' })
+            await service.create({ number: 1, capacity: 8, restaurantId: 'r2' })
+
+            const available = await service.findAvailable('r1', 3)
+
+            expect(available.map(t => t.number)).toEqual([2, 3, 1])
+        })
+
+        it('should include tables whose capacity equals the party size', async () => {
+            await service.create({ number: 1, capacity: 4, restaurantId: 'r1' })
+            expect(await service.findAvailable('r1', 4)).toHaveLength(1)
+        })
+
+        it('should return an empty list when no table fits', async () => {
+            await service.create({ number: 1, capacity: 2, restaurantId: 'r1' })
+            expect(await service.findAvailable('r1', 5)).toEqual([])
+        })
+
+        it.each([0, -1, 2.5, NaN, undefined])('should reject party size %s', async (partySize) => {
+            await expect(service.findAvailable('r1', partySize as number)).rejects.toThrow(InvalidPartySizeError)
         })
     })
 

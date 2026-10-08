@@ -7,6 +7,7 @@ import {
     InvalidTableNumberError,
     InvalidTableCapacityError,
     RestaurantIdRequiredError,
+    InvalidPartySizeError,
     TableNotFoundError,
     TableOccupiedError
 } from '@errors/DomainErrors.js'
@@ -103,6 +104,13 @@ export class TableService {
 
     async findByRestaurantId(restaurantId: string): Promise<Table[]> {
         return this.tableRepository.findByRestaurantId(restaurantId)
+    }
+
+    async findAvailable(restaurantId: string, partySize: number): Promise<Table[]> {
+        if (typeof partySize !== 'number' || !Number.isInteger(partySize) || partySize < 1) {
+            throw new InvalidPartySizeError()
+        }
+        return this.tableRepository.findAvailable(restaurantId, partySize)
     }
 
     private validateNumber(value: unknown): void {

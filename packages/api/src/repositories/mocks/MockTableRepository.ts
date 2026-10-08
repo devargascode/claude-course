@@ -13,6 +13,12 @@ export class MockTableRepository implements TableRepository {
             .filter(t => t.restaurantId === restaurantId)
     }
 
+    async findAvailable(restaurantId: string, partySize: number): Promise<Table[]> {
+        return Array.from(this.tables.values())
+            .filter(t => t.restaurantId === restaurantId && t.status === 'libre' && t.capacity >= partySize)
+            .sort((a, b) => a.capacity - b.capacity || a.number - b.number)
+    }
+
     async save(table: Table): Promise<void> {
         this.tables.set(table.id, table)
     }

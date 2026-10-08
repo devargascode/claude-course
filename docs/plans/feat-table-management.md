@@ -148,7 +148,7 @@ Tests con Vitest (`cd packages/api && npx vitest run`).
 4. [x] **API-4** `TableService.create` con validación (número > 0, capacidad entera > 0, estado por defecto `libre`) y `DuplicatedTableNumberError`, `InvalidTableNumberError`, `InvalidTableCapacityError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, `errors/DomainErrors.ts`.
 5. [x] **API-5** `TableService.update`, `findById`, `findByRestaurantId` y `delete` (rechaza `ocupada` con `TableOccupiedError`; 404 si no existe). Test: `table.service.test.ts`.
 6. [x] **API-6** `TableService.updateStatus` (normaliza estado, 404 si no existe). Test: `table.service.test.ts`.
-7. [ ] **API-7** `findAvailable(restaurantId, partySize)`: solo libres con capacidad ≥ N, ordenadas; `InvalidPartySizeError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, repo/mock (`findAvailable`).
+7. [x] **API-7** `findAvailable(restaurantId, partySize)`: solo libres con capacidad ≥ N, ordenadas; `InvalidPartySizeError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, repo/mock (`findAvailable`).
 8. [ ] **API-8** `occupy(id)` atómico: método `occupyIfFree` en repositorio (`UPDATE ... WHERE status='libre'`) y `TableNotAvailableError`. Test: servicio con mock + repositorio SQLite (segunda ocupación falla).
 9. [ ] **API-9** `errorHandler`: `TableNotFoundError` → 404, `TableNotAvailableError` → 409. Test: `errorHandler.test.ts` (nuevo, con supertest si está disponible; si no, invocando el handler con `res` simulado).
 10. [ ] **API-10** `TableController` + `table.routes.ts` (CRUD y `PATCH status`, `occupy`, roles según tabla) montado en `app.ts`. Test de integración HTTP: `table.routes.test.ts` (201/200/204, 401 sin token, 403 con rol no permitido).

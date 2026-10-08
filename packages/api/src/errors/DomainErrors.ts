@@ -198,3 +198,9 @@ export class TableOccupiedError extends AppError {
     super('Cannot delete an occupied table')
   }
 }
+
+export class InvalidPartySizeError extends AppError {
+  constructor() {
+    super('Party size must be a positive integer')
+  }
+}

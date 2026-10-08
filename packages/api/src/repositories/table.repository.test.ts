@@ -61,6 +61,19 @@ describe('SqliteTableRepository', () => {
         await repo.delete('t2')
         expect(await repo.findById('t2')).toBeNull()
     })
+
+    it('should find only free tables with enough capacity ordered by capacity then number', async () => {
+        await repo.save(buildTable({ id: 'a1', number: 21, capacity: 6, restaurantId: 'r2' }))
+        await repo.save(buildTable({ id: 'a2', number: 22, capacity: 4, restaurantId: 'r2' }))
+        await repo.save(buildTable({ id: 'a3', number: 20, capacity: 4, restaurantId: 'r2' }))
+        await repo.save(buildTable({ id: 'a4', number: 23, capacity: 2, restaurantId: 'r2' }))
+        await repo.save(buildTable({ id: 'a5', number: 24, capacity: 8, restaurantId: 'r2', status: 'ocupada' }))
+        await repo.save(buildTable({ id: 'a6', number: 25, capacity: 8, restaurantId: 'r2', status: 'reservada' }))
+
+        const available = await repo.findAvailable('r2', 3)
+
+        expect(available.map(t => t.id)).toEqual(['a3', 'a2', 'a1'])
+    })
 })
 
 describe('tables migration', () => {
