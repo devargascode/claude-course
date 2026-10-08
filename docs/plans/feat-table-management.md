@@ -177,7 +177,7 @@ Verificación: specs de store con `ng test` (la tarea ADM-1 comprueba que el run
 ### 6.4 Clientes (`packages/web-clientes`)
 
 1. [x] **CLI-1** Modelo `Table` y `TableService` (`getAvailable(restaurantId, partySize)`, `occupy(restaurantId, tableId)`). Test: spec con `HttpTestingController`. Ficheros: `core/models/table.model.ts`, `core/services/table.service.ts`.
-2. [ ] **CLI-2** `CartStore` guarda `tableId` (`setTable`, `tableId`, `clear` lo limpia; cambiar de restaurante lo limpia). Test: spec del `CartStore`. Fichero: `core/store/cart.store.ts`.
+2. [x] **CLI-2** `CartStore` guarda `tableId` (`setTable`, `tableId`, `clear` lo limpia; cambiar de restaurante lo limpia). Test: spec del `CartStore`. Fichero: `core/store/cart.store.ts`.
 3. [ ] **CLI-3** `OrderService.createOrder` envía `tableId` (parámetro nuevo) y `CartComponent` lo pasa desde el `CartStore`. Test: spec (el POST lleva `tableId`). Ficheros: `core/services/order.service.ts`, `features/cart/cart.component.ts`.
 4. [ ] **CLI-4** Componente `table-select`, paso 1: entrada de personas (≥ 1) que consulta mesas disponibles y las lista (número, descripción, capacidad), con estado vacío. Test: spec del componente. Fichero: `features/tables/table-select.component.ts`.
 5. [ ] **CLI-5** Paso 2: seleccionar mesa + "Continuar" → `occupy`, `CartStore.setTable` y navegación a la carta; en 409 refresca la lista y muestra el aviso. Test: spec (éxito navega, 409 muestra aviso y recarga).
