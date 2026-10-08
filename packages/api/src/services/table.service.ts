@@ -74,6 +74,18 @@ export class TableService {
         return updated
     }
 
+    async updateStatus(id: string, status: string): Promise<Table> {
+        const normalizedStatus = normalizeTableStatus(status)
+        const existing = await this.tableRepository.findById(id)
+        if (!existing) {
+            throw new TableNotFoundError()
+        }
+
+        const updated: Table = { ...existing, status: normalizedStatus, updatedAt: new Date().toISOString() }
+        await this.tableRepository.save(updated)
+        return updated
+    }
+
     async delete(id: string): Promise<void> {
         const existing = await this.tableRepository.findById(id)
         if (!existing) {

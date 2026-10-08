@@ -114,6 +114,34 @@ describe('TableService', () => {
         })
     })
 
+    describe('updateStatus', () => {
+        it('should change the status and refresh updatedAt', async () => {
+            const created = await service.create(validInput)
+
+            const updated = await service.updateStatus(created.id, 'ocupada')
+
+            expect(updated.status).toBe('ocupada')
+            expect(updated.number).toBe(created.number)
+            expect(updated.updatedAt >= created.updatedAt).toBe(true)
+            expect((await repo.findById(created.id))?.status).toBe('ocupada')
+        })
+
+        it('should normalize the status', async () => {
+            const created = await service.create(validInput)
+            expect((await service.updateStatus(created.id, ' Reservada ')).status).toBe('reservada')
+        })
+
+        it('should reject an invalid status without changing the table', async () => {
+            const created = await service.create(validInput)
+            await expect(service.updateStatus(created.id, 'roto')).rejects.toThrow(InvalidTableStatusError)
+            expect((await repo.findById(created.id))?.status).toBe('libre')
+        })
+
+        it('should throw TableNotFoundError when the table does not exist', async () => {
+            await expect(service.updateStatus('missing', 'libre')).rejects.toThrow(TableNotFoundError)
+        })
+    })
+
     describe('findById and findByRestaurantId', () => {
         it('should return the table or null', async () => {
             const created = await service.create(validInput)
