@@ -174,3 +174,21 @@ export class TableNotFoundError extends AppError {
     super('Table not found')
   }
 }
+
+export class InvalidTableNumberError extends AppError {
+  constructor() {
+    super('Table number must be a positive integer')
+  }
+}
+
+export class InvalidTableCapacityError extends AppError {
+  constructor() {
+    super('Table capacity must be a positive integer')
+  }
+}
+
+export class DuplicatedTableNumberError extends AppError {
+  constructor() {
+    super('Table number is already in use in this restaurant')
+  }
+}
