@@ -162,7 +162,7 @@ Verificación: specs de store con `ng test` (la tarea ADM-1 comprueba que el run
 1. [x] **ADM-1** Modelos `Table`, `CreateTableDto`, `UpdateTableDto` y `TableService` (CRUD HTTP). Test: spec del servicio con `HttpTestingController` (URLs y métodos). Ficheros: `features/tables/models/table.model.ts`, `services/table.service.ts`.
 2. [x] **ADM-2** `TableStore` (`loadByRestaurant`, `create`, `update`, `delete`, `loading`, `error`). Test: spec del store con servicio simulado. Fichero: `features/tables/store/table.store.ts`.
 3. [x] **ADM-3** Página `table-list` (tabla con número, descripción, capacidad, badge de estado, editar/borrar con confirmación). Test: spec del componente (renderiza filas y estado vacío). Ficheros: `pages/table-list/`.
-4. [ ] **ADM-4** Página `table-form` (alta/edición con validación de número y capacidad; muestra el error de la API, p. ej. número duplicado). Test: spec (formulario inválido no envía; envía DTO válido). Ficheros: `pages/table-form/`.
+4. [x] **ADM-4** Página `table-form` (alta/edición con validación de número y capacidad; muestra el error de la API, p. ej. número duplicado). Test: spec (formulario inválido no envía; envía DTO válido). Ficheros: `pages/table-form/`.
 5. [ ] **ADM-5** `tables.routes.ts`, ruta `restaurants/:id/tables` en `app.routes.ts` y enlace "Mesas" en `restaurant-dashboard`. Test: spec de rutas (resuelve lista y formulario) + `ng build` sin errores.
 
 ### 6.3 Empleados (`packages/web-empleados`)
