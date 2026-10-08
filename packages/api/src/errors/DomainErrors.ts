@@ -162,3 +162,15 @@ export class OrderNotFoundError extends AppError {
   }
 }
 
+
+export class InvalidTableStatusError extends AppError {
+  constructor(message?: string) {
+    super(message ?? 'Invalid table status')
+  }
+}
+
+export class TableNotFoundError extends AppError {
+  constructor() {
+    super('Table not found')
+  }
+}
