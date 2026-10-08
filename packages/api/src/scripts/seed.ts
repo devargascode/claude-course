@@ -3,6 +3,7 @@ import { dbConfig } from '@config/database.js'
 import { BcryptAuthService } from '@employee/infrastructure/BcryptAuthService.js'
 import { SqliteEmployeeRepository } from '@employee/infrastructure/SqliteEmployeeRepository.js'
 import { Employee } from '@employee/domain/Employee.js'
+import { seedTables } from '@scripts/seed-tables.js'
 
 const seed = async () => {
     try {
@@ -200,6 +201,9 @@ const seed = async () => {
         }
 
         console.log('Sample orders created')
+
+        await seedTables(dbConfig)
+        console.log('Sample tables created')
 
         console.log('\n=== Seed completado ===')
         console.log('\nEmpleados:')

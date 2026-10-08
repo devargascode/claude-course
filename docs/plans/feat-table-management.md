@@ -153,7 +153,7 @@ Tests con Vitest (`cd packages/api && npx vitest run`).
 9. [x] **API-9** `errorHandler`: `TableNotFoundError` → 404, `TableNotAvailableError` → 409. Test: `errorHandler.test.ts` (nuevo, con supertest si está disponible; si no, invocando el handler con `res` simulado).
 10. [x] **API-10** `TableController` + `table.routes.ts` (CRUD y `PATCH status`, `occupy`, roles según tabla) montado en `app.ts`. Test de integración HTTP: `table.routes.test.ts` (201/200/204, 401 sin token, 403 con rol no permitido).
 11. [x] **API-11** Ruta pública `available` en `table.public.routes.ts` montada en `app.ts`. Test de integración: `table.public.routes.test.ts` (filtra por capacidad y estado, 400 sin `partySize`).
-12. [ ] **API-12** Seed de mesas (idempotente, `INSERT OR IGNORE`) y actualizar `docs/dominio/modelo-datos.md` y `glosario.md`. Test: ejecutar el seed dos veces no duplica (test sobre `:memory:`); docs sin test.
+12. [x] **API-12** Seed de mesas (idempotente, `INSERT OR IGNORE`) y actualizar `docs/dominio/modelo-datos.md` y `glosario.md`. Test: ejecutar el seed dos veces no duplica (test sobre `:memory:`); docs sin test.
 
 ### 6.2 Admin (`packages/web-admin`)
 
