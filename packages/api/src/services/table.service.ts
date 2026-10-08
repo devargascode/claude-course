@@ -6,7 +6,9 @@ import {
     DuplicatedTableNumberError,
     InvalidTableNumberError,
     InvalidTableCapacityError,
-    RestaurantIdRequiredError
+    RestaurantIdRequiredError,
+    TableNotFoundError,
+    TableOccupiedError
 } from '@errors/DomainErrors.js'
 
 export interface CreateTableDTO {
@@ -15,6 +17,12 @@ export interface CreateTableDTO {
     capacity: number
     status?: string
     restaurantId: string
+}
+
+export interface UpdateTableDTO {
+    number: number
+    description?: string | null
+    capacity: number
 }
 
 export class TableService {
@@ -43,6 +51,46 @@ export class TableService {
 
         await this.tableRepository.save(table)
         return table
+    }
+
+    async update(id: string, dto: UpdateTableDTO): Promise<Table> {
+        const existing = await this.tableRepository.findById(id)
+        if (!existing) {
+            throw new TableNotFoundError()
+        }
+        this.validateNumber(dto.number)
+        this.validateCapacity(dto.capacity)
+        await this.ensureNumberIsFree(existing.restaurantId, dto.number, existing.id)
+
+        const updated: Table = {
+            ...existing,
+            number: dto.number,
+            description: dto.description ?? null,
+            capacity: dto.capacity,
+            updatedAt: new Date().toISOString()
+        }
+
+        await this.tableRepository.save(updated)
+        return updated
+    }
+
+    async delete(id: string): Promise<void> {
+        const existing = await this.tableRepository.findById(id)
+        if (!existing) {
+            throw new TableNotFoundError()
+        }
+        if (existing.status === 'ocupada') {
+            throw new TableOccupiedError()
+        }
+        await this.tableRepository.delete(id)
+    }
+
+    async findById(id: string): Promise<Table | null> {
+        return this.tableRepository.findById(id)
+    }
+
+    async findByRestaurantId(restaurantId: string): Promise<Table[]> {
+        return this.tableRepository.findByRestaurantId(restaurantId)
     }
 
     private validateNumber(value: unknown): void {

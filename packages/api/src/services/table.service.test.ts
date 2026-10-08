@@ -5,7 +5,9 @@ import {
     DuplicatedTableNumberError,
     InvalidTableNumberError,
     InvalidTableCapacityError,
-    InvalidTableStatusError
+    InvalidTableStatusError,
+    TableNotFoundError,
+    TableOccupiedError
 } from '@errors/DomainErrors.js'
 
 describe('TableService', () => {
@@ -69,6 +71,84 @@ describe('TableService', () => {
         it('should allow the same number in a different restaurant', async () => {
             await service.create(validInput)
             await expect(service.create({ ...validInput, restaurantId: 'r2' })).resolves.toBeDefined()
+        })
+    })
+
+    describe('update', () => {
+        it('should update number, description and capacity but keep status and restaurant', async () => {
+            const created = await service.create({ ...validInput, status: 'reservada' })
+
+            const updated = await service.update(created.id, { number: 5, description: 'Terrace', capacity: 6 })
+
+            expect(updated).toMatchObject({
+                id: created.id,
+                number: 5,
+                description: 'Terrace',
+                capacity: 6,
+                status: 'reservada',
+                restaurantId: 'r1',
+                createdAt: created.createdAt
+            })
+            expect(await repo.findById(created.id)).toEqual(updated)
+        })
+
+        it('should allow keeping the same number', async () => {
+            const created = await service.create(validInput)
+            await expect(service.update(created.id, { number: 1, description: null, capacity: 2 })).resolves.toMatchObject({ number: 1, description: null })
+        })
+
+        it('should throw TableNotFoundError when the table does not exist', async () => {
+            await expect(service.update('missing', { number: 1, capacity: 2 })).rejects.toThrow(TableNotFoundError)
+        })
+
+        it('should reject an invalid number or capacity', async () => {
+            const created = await service.create(validInput)
+            await expect(service.update(created.id, { number: 0, capacity: 2 })).rejects.toThrow(InvalidTableNumberError)
+            await expect(service.update(created.id, { number: 1, capacity: 0 })).rejects.toThrow(InvalidTableCapacityError)
+        })
+
+        it('should reject a number used by another table of the same restaurant', async () => {
+            await service.create(validInput)
+            const second = await service.create({ ...validInput, number: 2 })
+            await expect(service.update(second.id, { number: 1, capacity: 4 })).rejects.toThrow(DuplicatedTableNumberError)
+        })
+    })
+
+    describe('findById and findByRestaurantId', () => {
+        it('should return the table or null', async () => {
+            const created = await service.create(validInput)
+            expect(await service.findById(created.id)).toEqual(created)
+            expect(await service.findById('missing')).toBeNull()
+        })
+
+        it('should list only the tables of the restaurant', async () => {
+            const a = await service.create(validInput)
+            await service.create({ ...validInput, restaurantId: 'r2' })
+            expect(await service.findByRestaurantId('r1')).toEqual([a])
+        })
+    })
+
+    describe('delete', () => {
+        it('should delete a free table', async () => {
+            const created = await service.create(validInput)
+            await service.delete(created.id)
+            expect(await repo.findById(created.id)).toBeNull()
+        })
+
+        it('should delete a reserved table', async () => {
+            const created = await service.create({ ...validInput, status: 'reservada' })
+            await service.delete(created.id)
+            expect(await repo.findById(created.id)).toBeNull()
+        })
+
+        it('should reject deleting an occupied table', async () => {
+            const created = await service.create({ ...validInput, status: 'ocupada' })
+            await expect(service.delete(created.id)).rejects.toThrow(TableOccupiedError)
+            expect(await repo.findById(created.id)).not.toBeNull()
+        })
+
+        it('should throw TableNotFoundError when the table does not exist', async () => {
+            await expect(service.delete('missing')).rejects.toThrow(TableNotFoundError)
         })
     })
 })

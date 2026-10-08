@@ -192,3 +192,9 @@ export class DuplicatedTableNumberError extends AppError {
     super('Table number is already in use in this restaurant')
   }
 }
+
+export class TableOccupiedError extends AppError {
+  constructor() {
+    super('Cannot delete an occupied table')
+  }
+}

@@ -146,7 +146,7 @@ Tests con Vitest (`cd packages/api && npx vitest run`).
 2. [x] **API-2** Migración `tables` en `database.ts`. Test: `table.repository.test.ts` (la tabla existe, `UNIQUE(restaurant_id, number)` se respeta, `:memory:`). Ficheros: `config/database.ts`, `repositories/table.repository.test.ts`.
 3. [x] **API-3** `SqliteTableRepository` (`findById`, `findByRestaurantId`, `save`, `delete`) + `MockTableRepository`. Test: `table.repository.test.ts` (round-trip). Ficheros: `repositories/table.repository.ts`, `repositories/mocks/MockTableRepository.ts`.
 4. [x] **API-4** `TableService.create` con validación (número > 0, capacidad entera > 0, estado por defecto `libre`) y `DuplicatedTableNumberError`, `InvalidTableNumberError`, `InvalidTableCapacityError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, `errors/DomainErrors.ts`.
-5. [ ] **API-5** `TableService.update`, `findById`, `findByRestaurantId` y `delete` (rechaza `ocupada` con `TableOccupiedError`; 404 si no existe). Test: `table.service.test.ts`.
+5. [x] **API-5** `TableService.update`, `findById`, `findByRestaurantId` y `delete` (rechaza `ocupada` con `TableOccupiedError`; 404 si no existe). Test: `table.service.test.ts`.
 6. [ ] **API-6** `TableService.updateStatus` (normaliza estado, 404 si no existe). Test: `table.service.test.ts`.
 7. [ ] **API-7** `findAvailable(restaurantId, partySize)`: solo libres con capacidad ≥ N, ordenadas; `InvalidPartySizeError`. Test: `table.service.test.ts`. Ficheros: `services/table.service.ts`, repo/mock (`findAvailable`).
 8. [ ] **API-8** `occupy(id)` atómico: método `occupyIfFree` en repositorio (`UPDATE ... WHERE status='libre'`) y `TableNotAvailableError`. Test: servicio con mock + repositorio SQLite (segunda ocupación falla).
