@@ -1,5 +1,67 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { Database } from '@config/database.js'
+import { SqliteTableRepository } from '@repositories/table.repository.js'
+import type { Table } from '@models/table.model.js'
+
+describe('SqliteTableRepository', () => {
+    let db: Database
+    let repo: SqliteTableRepository
+
+    const buildTable = (overrides: Partial<Table> = {}): Table => ({
+        id: 't1',
+        number: 1,
+        description: 'Window',
+        capacity: 4,
+        status: 'libre',
+        restaurantId: 'r1',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-01T00:00:00.000Z',
+        ...overrides
+    })
+
+    beforeAll(async () => {
+        process.env.NODE_ENV = 'test'
+        db = new Database()
+        await db.initialize()
+        repo = new SqliteTableRepository(db)
+        for (const id of ['r1', 'r2']) {
+            await db.run(
+                'INSERT INTO restaurants (id, name, address, email, phone, owner_first_name, owner_last_name, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [id, 'Rest', 'Street 1', 'a@b.com', '600000000', 'Own', 'Er', 'now', 'now']
+            )
+        }
+    })
+
+    afterAll(async () => {
+        await db.close()
+    })
+
+    it('should save and find a table by id', async () => {
+        await repo.save(buildTable())
+        expect(await repo.findById('t1')).toEqual(buildTable())
+    })
+
+    it('should return null when the table does not exist', async () => {
+        expect(await repo.findById('missing')).toBeNull()
+    })
+
+    it('should update an existing table', async () => {
+        await repo.save(buildTable({ number: 7, description: null, capacity: 6, status: 'reservada', updatedAt: '2026-02-01T00:00:00.000Z' }))
+        const found = await repo.findById('t1')
+        expect(found).toMatchObject({ number: 7, description: null, capacity: 6, status: 'reservada', updatedAt: '2026-02-01T00:00:00.000Z' })
+    })
+
+    it('should find tables by restaurant', async () => {
+        await repo.save(buildTable({ id: 't2', number: 2, restaurantId: 'r2' }))
+        const tables = await repo.findByRestaurantId('r2')
+        expect(tables.map(t => t.id)).toEqual(['t2'])
+    })
+
+    it('should delete a table', async () => {
+        await repo.delete('t2')
+        expect(await repo.findById('t2')).toBeNull()
+    })
+})
 
 describe('tables migration', () => {
     let db: Database
