@@ -7,6 +7,7 @@ import {
     InvalidTableCapacityError,
     InvalidTableStatusError,
     InvalidPartySizeError,
+    TableNotAvailableError,
     TableNotFoundError,
     TableOccupiedError
 } from '@errors/DomainErrors.js'
@@ -170,6 +171,32 @@ describe('TableService', () => {
 
         it.each([0, -1, 2.5, NaN, undefined])('should reject party size %s', async (partySize) => {
             await expect(service.findAvailable('r1', partySize as number)).rejects.toThrow(InvalidPartySizeError)
+        })
+    })
+
+    describe('occupy', () => {
+        it('should mark a free table as occupied', async () => {
+            const created = await service.create(validInput)
+
+            const occupied = await service.occupy(created.id)
+
+            expect(occupied.status).toBe('ocupada')
+            expect((await repo.findById(created.id))?.status).toBe('ocupada')
+        })
+
+        it.each(['ocupada', 'reservada'])('should reject occupying a %s table', async (status) => {
+            const created = await service.create({ ...validInput, status })
+            await expect(service.occupy(created.id)).rejects.toThrow(TableNotAvailableError)
+        })
+
+        it('should reject the second of two occupy calls', async () => {
+            const created = await service.create(validInput)
+            await service.occupy(created.id)
+            await expect(service.occupy(created.id)).rejects.toThrow(TableNotAvailableError)
+        })
+
+        it('should throw TableNotFoundError when the table does not exist', async () => {
+            await expect(service.occupy('missing')).rejects.toThrow(TableNotFoundError)
         })
     })
 

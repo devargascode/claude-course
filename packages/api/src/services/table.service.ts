@@ -9,6 +9,7 @@ import {
     RestaurantIdRequiredError,
     InvalidPartySizeError,
     TableNotFoundError,
+    TableNotAvailableError,
     TableOccupiedError
 } from '@errors/DomainErrors.js'
 
@@ -84,6 +85,24 @@ export class TableService {
 
         const updated: Table = { ...existing, status: normalizedStatus, updatedAt: new Date().toISOString() }
         await this.tableRepository.save(updated)
+        return updated
+    }
+
+    async occupy(id: string): Promise<Table> {
+        const existing = await this.tableRepository.findById(id)
+        if (!existing) {
+            throw new TableNotFoundError()
+        }
+
+        const occupied = await this.tableRepository.occupyIfFree(id, new Date().toISOString())
+        if (!occupied) {
+            throw new TableNotAvailableError()
+        }
+
+        const updated = await this.tableRepository.findById(id)
+        if (!updated) {
+            throw new TableNotFoundError()
+        }
         return updated
     }
 

@@ -19,6 +19,13 @@ export class MockTableRepository implements TableRepository {
             .sort((a, b) => a.capacity - b.capacity || a.number - b.number)
     }
 
+    async occupyIfFree(id: string, updatedAt: string): Promise<boolean> {
+        const table = this.tables.get(id)
+        if (!table || table.status !== 'libre') return false
+        this.tables.set(id, { ...table, status: 'ocupada', updatedAt })
+        return true
+    }
+
     async save(table: Table): Promise<void> {
         this.tables.set(table.id, table)
     }

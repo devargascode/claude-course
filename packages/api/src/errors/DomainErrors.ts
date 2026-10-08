@@ -204,3 +204,9 @@ export class InvalidPartySizeError extends AppError {
     super('Party size must be a positive integer')
   }
 }
+
+export class TableNotAvailableError extends AppError {
+  constructor() {
+    super('Table is not available')
+  }
+}

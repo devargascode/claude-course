@@ -74,6 +74,34 @@ describe('SqliteTableRepository', () => {
 
         expect(available.map(t => t.id)).toEqual(['a3', 'a2', 'a1'])
     })
+
+    it('should occupy a free table only once', async () => {
+        await repo.save(buildTable({ id: 'o1', number: 30, restaurantId: 'r2', updatedAt: '2026-01-01T00:00:00.000Z' }))
+
+        expect(await repo.occupyIfFree('o1', '2026-03-01T00:00:00.000Z')).toBe(true)
+        expect(await repo.occupyIfFree('o1', '2026-03-02T00:00:00.000Z')).toBe(false)
+
+        expect(await repo.findById('o1')).toMatchObject({ status: 'ocupada', updatedAt: '2026-03-01T00:00:00.000Z' })
+    })
+
+    it('should not occupy a reserved table nor a missing one', async () => {
+        await repo.save(buildTable({ id: 'o2', number: 31, restaurantId: 'r2', status: 'reservada' }))
+
+        expect(await repo.occupyIfFree('o2', '2026-03-01T00:00:00.000Z')).toBe(false)
+        expect(await repo.occupyIfFree('missing', '2026-03-01T00:00:00.000Z')).toBe(false)
+        expect((await repo.findById('o2'))?.status).toBe('reservada')
+    })
+
+    it('should let only one of two concurrent occupy calls win', async () => {
+        await repo.save(buildTable({ id: 'o3', number: 32, restaurantId: 'r2' }))
+
+        const results = await Promise.all([
+            repo.occupyIfFree('o3', '2026-03-01T00:00:00.000Z'),
+            repo.occupyIfFree('o3', '2026-03-01T00:00:00.000Z')
+        ])
+
+        expect(results.filter(Boolean)).toHaveLength(1)
+    })
 })
 
 describe('tables migration', () => {
